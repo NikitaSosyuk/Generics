@@ -17,7 +17,7 @@ protocol Queueable {
 // MARK: - Implementation of Queueable protocol
 
 public struct Queue<T>: Queueable {
-    // мне так больше нравится, когда явно пишем
+    // мне так больше нравится, когда явно видно - лайк
     typealias Element = T
 
     private var _array = [T]()
@@ -101,8 +101,11 @@ tasks.forEach { taskQueue.enqueue($0) }
 
 print("Does queue empty? \(taskQueue.isEmpty)\n")
 print("Count of elements = \(taskQueue.count)\n")
-print("Head = \(taskQueue.head!)\n") // тут я уверен, что не nil 😅
-print("Tip = \(taskQueue.tip!)\n") // тут я уверен, что не nil 😅
+
+// тут я уверен, что не nil
+print("Head = \(taskQueue.head!)\n")
+print("Tip = \(taskQueue.tip!)\n")
+
 print("Does queue contains Task with identifier 🐰?  \(taskQueue.contains(identifier: "🐰")) \n")
 
 taskQueue.contains(element: tasks[2])
@@ -163,7 +166,6 @@ class StringValidator: ValueValidator {
 
 class ViewController {
     var label: String = "Empty"
-
     var validator: AnyValueValidator<String>!
 }
 
