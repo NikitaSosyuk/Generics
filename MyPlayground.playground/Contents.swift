@@ -113,3 +113,63 @@ taskQueue.executeAll()
 
 firstTask?.execute()
 
+// MARK: - Type Erasure
+
+protocol ValueValidator {
+    associatedtype Value
+    func isValid(_ value: Value) -> Bool
+}
+
+private class _AnyValueValidator<Value>: ValueValidator {
+    func isValid(_ value: Value) -> Bool {
+        assertionFailure("Dude, this method is abstract")
+        return false
+   }
+}
+
+private class _ValidatorBox<Base: ValueValidator>: _AnyValueValidator<Base.Value> {
+   private let _base: Base
+
+   init(_ base: Base) {
+      _base = base
+   }
+
+   override func isValid(_ value: Value) -> Bool {
+      return _base.isValid(value)
+   }
+}
+
+struct AnyValueValidator<Value>: ValueValidator {
+    private let _box: _AnyValueValidator<Value>
+
+    init<ValidatorType: ValueValidator>(_ validator: ValidatorType) where ValidatorType.Value == Value {
+        _box = _ValidatorBox(validator)
+    }
+
+    func isValid(_ value: Value) -> Bool {
+        return _box.isValid(value)
+    }
+}
+
+class StringValidator: ValueValidator {
+    typealias Value = String
+
+    private let reference = "Nikita Sosyuk 🦦"
+
+    func isValid(_ value: String) -> Bool {
+        value == reference
+    }
+}
+
+class ViewController {
+    var label: String = "Empty"
+
+    var validator: AnyValueValidator<String>!
+}
+
+let vc = ViewController()
+vc.validator = AnyValueValidator(StringValidator())
+
+vc.validator.isValid(vc.label)
+vc.label = "Nikita Sosyuk 🦦"
+vc.validator.isValid(vc.label)
